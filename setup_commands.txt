@@ -6,7 +6,10 @@ npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 
 # Backend
+python3 -m venv venv
+source venv/bin/activate
 pip install fastapi uvicorn sqlalchemy pydantic
+pip freeze > requirements.txt
 
 # Docker
 # Ensure Docker and Docker Compose are installed on your system.
