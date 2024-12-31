@@ -1,0 +1,53 @@
+# Node.js (Frontend)
+node_modules/
+.next/
+out/
+package-lock.json
+yarn.lock
+tailwind.config.js
+postcss.config.js
+
+# Python (Backend)
+__pycache__/
+*.py[cod]
+*.env
+*.sqlite3
+*.db
+*.log
+*.pid
+
+# Virtual Environments
+venv/
+.env/
+
+# Docker
+docker-compose.override.yml
+*.tar
+*.bak
+
+# IDE and Editor Configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Compiled and Cache Files
+*.pyc
+*.pyo
+.cache/
+coverage/
+*.coverage
+
+# NGINX
+docker/nginx/*.conf~
+
+# Other
+test-results/
