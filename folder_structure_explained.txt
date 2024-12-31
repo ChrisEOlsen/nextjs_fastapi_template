@@ -1,0 +1,23 @@
+# Folder Structure Explanation
+
+## Frontend
+- **src/components/**: Reusable React components.
+- **src/pages/**: Route-based pages for the application.
+- **src/styles/**: Tailwind CSS and other styles.
+
+## Backend
+- **app/models/**: SQLAlchemy models for defining database tables.
+- **app/schemas/**: Pydantic schemas for data validation.
+- **app/routers/**: API route handlers.
+- **app/services/**: Business logic and reusable functionalities.
+- **app/utils/**: Helper functions and utilities.
+- **app/templates/**: HTML templates for emails or server-rendered content.
+
+## Docker
+- **Dockerfile**: Builds application containers.
+- **docker-compose.yml**: Orchestrates services (frontend, backend, database).
+- **nginx/nginx.conf**: Configuration for NGINX as a reverse proxy.
+
+## Shared Documentation
+- **setup_commands.txt**: Contains installation commands.
+- **folder_structure_explained.txt**: Explains folder and file purposes.
