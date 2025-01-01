@@ -127,6 +127,16 @@ npm install next react react-dom
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 
+#Add scripts to package.json:
+  "scripts": {
+    "dev": "next dev",                  // Starts the Next.js development server
+    "build": "next build",             // Builds the Next.js application for production
+    "start": "next start",             // Starts the production server
+    "lint": "next lint",               // Runs Next.js linting checks
+    "test": "echo \"Error: no test specified\" && exit 1", // Placeholder for tests
+    "postinstall": "next build"        // Automatically builds after installing dependencies
+  },
+
 ## Running the Project
 # Backend: Run the FastAPI server
 uvicorn main:app --reload
