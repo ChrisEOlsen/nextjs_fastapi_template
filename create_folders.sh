@@ -129,12 +129,12 @@ npx tailwindcss init
 
 #Add scripts to package.json:
   "scripts": {
-    "dev": "next dev",                  // Starts the Next.js development server
-    "build": "next build",             // Builds the Next.js application for production
-    "start": "next start",             // Starts the production server
-    "lint": "next lint",               // Runs Next.js linting checks
-    "test": "echo \"Error: no test specified\" && exit 1", // Placeholder for tests
-    "postinstall": "next build"        // Automatically builds after installing dependencies
+    "dev": "next dev",                  
+    "build": "next build",             
+    "start": "next start",             
+    "lint": "next lint",              
+    "test": "echo \"Error: no test specified\" && exit 1", 
+    "postinstall": "next build"    
   },
 
 ## Running the Project
