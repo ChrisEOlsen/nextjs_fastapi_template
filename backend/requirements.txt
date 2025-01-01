@@ -1,5 +1,0 @@
-# FastAPI and SQLAlchemy dependencies
-fastapi
-sqlalchemy
-pydantic
-uvicorn[standard]
