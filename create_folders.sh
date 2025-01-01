@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Create project root directory
-mkdir -p nextjs_fastapi_template
-cd nextjs_fastapi_template
-
 # Create the backend folder structure
 mkdir -p backend/app/{models,routers,schemas,services,templates,utils}
 touch backend/app/models/__init__.py
