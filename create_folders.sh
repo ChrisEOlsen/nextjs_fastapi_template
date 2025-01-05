@@ -215,10 +215,10 @@ alembic init alembic
 
 # PostgreSQL Setup
 # Start PostgreSQL
-sudo service postgresql start
+brew services start postgresql
 
 # Open PostgreSQL shell
-sudo -u postgres psql
+psql postgres
 
 # Create a database and user
 CREATE DATABASE my_database;
