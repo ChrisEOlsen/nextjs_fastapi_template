@@ -124,6 +124,24 @@ export default function Home() {
 }
 EOL
 
+# Add _app.js file to frontend src/pages
+cat <<EOL >frontend/src/pages/_app.js
+// Import global CSS styles
+import '../styles/globals.css';
+
+// Custom App component
+export default function MyApp({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+EOL
+
+# Add globals.css file to frontend src/styles
+cat <<EOL >frontend/src/styles/globals.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+EOL
+
 # Add Tailwind configuration file
 cat <<EOL >frontend/tailwind.config.js
 // Tailwind CSS configuration file
@@ -230,4 +248,4 @@ uvicorn main:app --reload
 npm run dev
 EOL
 
-echo "Project structure created successfully with database setup included!"
+echo "Project structure created successfully with Tailwind, _app.js, and globals.css included!"
