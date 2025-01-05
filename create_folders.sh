@@ -240,6 +240,17 @@ npm install next react react-dom
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 
+
+#Add scripts to package.json:
+  "scripts": {
+    "dev": "next dev",                  
+    "build": "next build",             
+    "start": "next start",             
+    "lint": "next lint",               
+    "test": "echo \"Error: no test specified\" && exit 1", 
+    "postinstall": "next build"        
+  },
+
 ## Running the Project
 # Backend: Run the FastAPI server
 uvicorn main:app --reload
