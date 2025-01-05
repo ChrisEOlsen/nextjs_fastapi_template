@@ -1,0 +1,21 @@
+# Folder Structure Explanation
+
+## Backend
+- **app/models/**: SQLAlchemy models for database tables.
+- **app/routers/**: FastAPI routers to define API endpoints.
+- **app/schemas/**: Pydantic schemas for data validation and serialization.
+- **app/services/**: Business logic and reusable backend functionalities.
+- **app/templates/**: HTML templates for emails or server-rendered responses.
+- **app/utils/**: Helper functions and utilities.
+- **app/database/connections.py**: Manages database engine and session creation.
+- **app/database/dependencies.py**: Provides dependency injection for DB sessions.
+- **main.py**: The entry point for the FastAPI application.
+
+## Frontend
+- **src/components/**: Reusable React components.
+- **src/pages/**: Route-based pages for the Next.js application.
+- **src/styles/**: Tailwind CSS and other styles.
+
+## zz_dev_help
+- **folder_structure_explained.txt**: Explains the purpose of each folder and file.
+- **setup_commands.txt**: Contains installation commands and instructions.

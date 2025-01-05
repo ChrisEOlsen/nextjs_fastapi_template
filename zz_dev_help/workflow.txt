@@ -1,0 +1,32 @@
+# commiting changes to schemas
+alembic revision --autogenerate -m "Initial migration"
+
+# Running the generated migration script (double check versions script if you want to ensure it all looks correct) 
+alembic upgrade head
+
+# Connect to db as root
+psql postgres
+
+# Connect to db
+psql -U myuser -d mydatabase
+
+# If password
+psql -U myuser -d mydatabase -W
+
+# List all db's
+\l
+
+# Switch to database
+\c mydatabase
+
+# List all tables
+\dt
+
+# View a schema
+\d tablename
+
+# Run a query
+SELECT * FROM users;
+
+# exit
+\q
