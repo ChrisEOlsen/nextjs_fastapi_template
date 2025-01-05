@@ -1,22 +1,80 @@
 #!/bin/bash
 
 # Create the backend folder structure
-mkdir -p backend/app/{models,routers,schemas,services,templates,utils}
+mkdir -p backend/app/{models,routers,schemas,services,templates,utils,database}
 touch backend/app/models/__init__.py
 touch backend/app/schemas/__init__.py
+
+# Add Base model code to app.models.__init__.py
+cat <<EOL >backend/app/models/__init__.py
+from sqlalchemy.ext.declarative import declarative_base
+
+# Centralized Base for all models
+Base = declarative_base()
+
+# Import all models here so they are registered with Alembic
+# For example:
+# from app.models.user import User
+EOL
+
+# Add database connections.py
+cat <<EOL >backend/app/database/connections.py
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Database URL from .env
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Create Async Engine
+engine = create_async_engine(DATABASE_URL, echo=True)
+
+# Session Maker
+async_session = sessionmaker(
+    engine, class_=AsyncSession, expire_on_commit=False
+)
+EOL
+
+# Add database dependencies.py
+cat <<EOL >backend/app/database/dependencies.py
+from app.database.connections import async_session
+
+# Dependency for DB session
+async def get_db():
+    async with async_session() as session:
+        yield session
+EOL
 
 # Add basic starter code to main.py
 cat <<EOL >backend/main.py
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.routers import example_router
+from app.database.connections import engine
+from alembic.config import Config
+from alembic import command
+
+# Function to run Alembic migrations
+def run_migrations():
+    """Run Alembic migrations at server startup."""
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
 
 # Init lifespan of FastAPI application
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Server start stuff
-    yield
-    # Server close stuff 
+    # Server start: Run migrations if you want during development and frequent changes are being made
+    # Else use: alembic upgrade head from backend/
+    # run_migrations()
+
+    yield  # App runs while this context is active
+
+    # Server shutdown: Dispose of the database connection
+    await engine.dispose()
 
 # Initialize FastAPI app with lifespan management
 app = FastAPI(lifespan=lifespan)
@@ -70,11 +128,21 @@ EOL
 cat <<EOL >frontend/tailwind.config.js
 // Tailwind CSS configuration file
 module.exports = {
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {},
   },
   plugins: [],
+};
+EOL
+
+# Add PostCSS configuration file
+cat <<EOL >frontend/postcss.config.js
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
 };
 EOL
 
@@ -92,6 +160,8 @@ cat <<EOL >zz_dev_help/folder_structure_explained.txt
 - **app/services/**: Business logic and reusable backend functionalities.
 - **app/templates/**: HTML templates for emails or server-rendered responses.
 - **app/utils/**: Helper functions and utilities.
+- **app/database/connections.py**: Manages database engine and session creation.
+- **app/database/dependencies.py**: Provides dependency injection for DB sessions.
 - **main.py**: The entry point for the FastAPI application.
 
 ## Frontend
@@ -104,7 +174,7 @@ cat <<EOL >zz_dev_help/folder_structure_explained.txt
 - **setup_commands.txt**: Contains installation commands and instructions.
 EOL
 
-# Add setup_commands.txt
+# Add setup_commands.txt with detailed setup instructions
 cat <<EOL >zz_dev_help/setup_commands.txt
 # Installation Commands and Setup Instructions
 
@@ -116,7 +186,32 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install dependencies
-pip install fastapi uvicorn pydantic sqlalchemy
+pip install fastapi uvicorn pydantic sqlalchemy alembic asyncpg psycopg2-binary python-dotenv
+
+# Initialize Alembic
+alembic init alembic
+
+# Update env.py in Alembic folder
+# Modify 'target_metadata' to point to app.models.Base
+# Update sqlalchemy.url to use DATABASE_URL_SYNC from the .env file
+
+# PostgreSQL Setup
+# Start PostgreSQL
+sudo service postgresql start
+
+# Open PostgreSQL shell
+sudo -u postgres psql
+
+# Create a database and user
+CREATE DATABASE my_database;
+CREATE USER my_user WITH PASSWORD 'strong_password';
+GRANT ALL PRIVILEGES ON DATABASE my_database TO my_user;
+
+# Update .env file
+cat <<DOTENV >backend/.env
+DATABASE_URL=postgresql+asyncpg://my_user:strong_password@localhost/my_database
+DATABASE_URL_SYNC=postgresql+psycopg2://my_user:strong_password@localhost/my_database
+DOTENV
 
 ## Frontend
 # Initialize the project
@@ -127,16 +222,6 @@ npm install next react react-dom
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 
-#Add scripts to package.json:
-  "scripts": {
-    "dev": "next dev",                  
-    "build": "next build",             
-    "start": "next start",             
-    "lint": "next lint",              
-    "test": "echo \"Error: no test specified\" && exit 1", 
-    "postinstall": "next build"    
-  },
-
 ## Running the Project
 # Backend: Run the FastAPI server
 uvicorn main:app --reload
@@ -145,4 +230,4 @@ uvicorn main:app --reload
 npm run dev
 EOL
 
-echo "Project structure created successfully!"
+echo "Project structure created successfully with database setup included!"
