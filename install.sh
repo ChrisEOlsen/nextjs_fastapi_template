@@ -41,11 +41,6 @@ pip freeze >requirements.txt
 echo "Initializing Alembic..."
 alembic init alembic
 
-# Update Alembic configuration paths
-echo "Updating Alembic paths..."
-sed -i '' 's|script_location = alembic|script_location = backend/alembic|' alembic.ini 2>/dev/null ||
-  sed -i 's|script_location = alembic|script_location = backend/alembic|' alembic.ini
-
 # Return to the root directory
 cd ..
 
