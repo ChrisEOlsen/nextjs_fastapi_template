@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.routers import example_router
 from app.database.connections import engine
 from alembic.config import Config
 from alembic import command

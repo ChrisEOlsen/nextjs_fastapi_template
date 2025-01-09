@@ -5,4 +5,4 @@ Base = declarative_base()
 
 # Import all models here so they are registered with Alembic
 # For example:
-# from app.models.user import User
+#from app.models.pricing import Pricing
