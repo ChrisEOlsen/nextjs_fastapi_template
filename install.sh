@@ -27,6 +27,8 @@ cd nextjs || exit
 npm init -y
 npm install next react react-dom
 npm install -D tailwindcss postcss autoprefixer
+npm install next-auth
+npm install react-icons
 npx tailwindcss init
 echo "Frontend setup complete. Returning to root directory..."
 cd ..
@@ -37,17 +39,26 @@ cd fastapi || exit
 python3 -m venv venv
 source venv/bin/activate
 pip install fastapi uvicorn pydantic sqlalchemy alembic asyncpg psycopg2-binary python-dotenv greenlet
+pip freeze >requirements.txt
 echo "Backend dependencies installed."
 
 # Initialize Alembic
 if [ ! -f "alembic.ini" ]; then
   echo "Initializing Alembic..."
   alembic init migrations
-  mv migrations app/db/
 
-  # Update alembic.ini to point to the correct script location
-  sed -i '' 's/^script_location = migrations/script_location = app\/db\/migrations/' alembic.ini 2>/dev/null ||
-    sed -i 's/^script_location = migrations/script_location = app\/db\/migrations/' alembic.ini
+  # Verify that migrations folder was created
+  if [ -d "migrations" ]; then
+    mv migrations app/db/
+
+    # Update alembic.ini to point to the correct script location
+    sed -i '' 's/^script_location = migrations/script_location = app\/db\/migrations/' alembic.ini 2>/dev/null ||
+      sed -i 's/^script_location = migrations/script_location = app\/db\/migrations/' alembic.ini
+    echo "Alembic initialization complete. Migrations folder moved."
+  else
+    echo "Error: Migrations folder not created. Alembic initialization failed."
+    exit 1
+  fi
 fi
 
 cd ..
@@ -105,6 +116,30 @@ if [ "$SETUP_DB" == "yes" ]; then
   echo ".env file created with the following content:"
   cat $ENV_FILE
 
+  # Define the content to add to the .env file
+  ENV_CONTENT="NEXTAUTH_URL=http://localhost:3000
+  FASTAPI_URL=http://localhost:8000
+
+  NEXTAUTH_SECRET=
+
+  GOOGLE_CLIENT_ID=
+  GOOGLE_CLIENT_SECRET="
+
+  # Define the target .env file path
+  ENV_FILE="nextjs/.env"
+
+  # Create the .env file if it doesn't exist
+  if [ ! -f "$ENV_FILE" ]; then
+    echo "Creating .env file in the nextjs folder..."
+    touch "$ENV_FILE"
+  fi
+
+  # Append the content to the .env file
+  echo "$ENV_CONTENT" >"$ENV_FILE"
+
+  echo ".env file updated with the following content:"
+  cat "$ENV_FILE"
+
   # Output env.py update instructions
   echo "Make sure to update the 'env.py' in your Alembic folder as follows:"
   echo "--------------------------------"
@@ -113,6 +148,10 @@ if [ "$SETUP_DB" == "yes" ]; then
   echo
   echo "# Load environment variables from .env"
   echo "load_dotenv()"
+  echo
+  echo "config = context.config"
+  echo 'config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL_SYNC"))'
+  echo
   echo
   echo "# Import Base from your models folder"
   echo "from app.db.models import Base"
@@ -133,7 +172,7 @@ echo "
     \"lint\": \"next lint\",
     \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",
     \"postinstall\": \"next build\"
-  }
+  },
 "
 
 # Final instructions

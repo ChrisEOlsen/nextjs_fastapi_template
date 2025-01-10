@@ -1,0 +1,41 @@
+# create a secret
+openssl rand -base64 32
+
+# start fastapi on localhost 8000
+uvicorn app.main:app --host localhost --port 8000 --reload
+
+# start nextjs dev server (ensure scripts in package.json)
+npm run dev
+
+# commiting changes to schemas
+alembic revision --autogenerate -m "Initial migration"
+
+# Running the generated migration script (double check versions script if you want to ensure it all looks correct) 
+alembic upgrade head
+
+# Connect to db as root
+psql postgres
+
+# Connect to db
+psql -U myuser -d mydatabase
+
+# If password
+psql -U myuser -d mydatabase -W
+
+# List all db's
+\l
+
+# Switch to database
+\c mydatabase
+
+# List all tables
+\dt
+
+# View a schema
+\d tablename
+
+# Run a query
+SELECT * FROM users;
+
+# exit
+\q
