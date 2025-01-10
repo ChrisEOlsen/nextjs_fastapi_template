@@ -4,8 +4,6 @@ node_modules/
 out/
 package-lock.json
 yarn.lock
-tailwind.config.js
-postcss.config.js
 
 # Python (Backend)
 __pycache__/
