@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from app.db.connections import engine
 from alembic.config import Config
+from fastapi.middleware.cors import CORSMiddleware
 from alembic import command
-from app.api.v1.endpoints.auth import router as auth_router
+from app.middleware.shared_secret import validate_shared_secret
 
 # Function to run Alembic migrations
 def run_migrations():
@@ -26,5 +28,16 @@ async def lifespan(app: FastAPI):
 # Initialize FastAPI app with lifespan management
 app = FastAPI(lifespan=lifespan)
 
-# Include the auth router
-app.include_router(auth_router)
+# Add the shared secret middleware - 
+# All nextjs routes pointing to fastapi routes need to contain:  
+# "X-Shared-Secret": process.env.SHARED_SECRET
+# This ensures that only the nextjs application can communicate with fastapi
+app.middleware("http")(validate_shared_secret)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Only allow Next.js domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+

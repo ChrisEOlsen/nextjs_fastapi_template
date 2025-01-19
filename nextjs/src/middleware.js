@@ -13,6 +13,10 @@ export async function middleware(req) {
   return NextResponse.next();
 }
 
+// Apply the middleware to both /admin and /api/admin routes
 export const config = {
-  matcher: "/admin/:path*",
+  matcher: [
+    "/admin/:path*",      // Matches all routes under /admin
+    "/api/admin/:path*",  // Matches all routes under /api/admin
+  ],
 };

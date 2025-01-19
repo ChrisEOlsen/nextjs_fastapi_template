@@ -19,6 +19,7 @@ export default NextAuth({
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "X-Shared-Secret": process.env.SHARED_SECRET
             },
             body: JSON.stringify({ email: user.email }),
           });
